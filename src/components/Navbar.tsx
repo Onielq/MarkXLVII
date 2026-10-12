@@ -11,6 +11,7 @@ const navItems = [
   { id: 'architecture', label: 'Architecture' },
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'usecases', label: 'Use Cases' },
+  { id: 'extensions', label: 'Extensions' },
   { id: 'setup', label: 'Setup' },
 ];
 
