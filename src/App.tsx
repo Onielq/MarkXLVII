@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Features from './components/Features';
 import Architecture from './components/Architecture';
 import Dashboard from './components/Dashboard';
+import UseCases from './components/UseCases';
 import Setup from './components/Setup';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -16,7 +17,7 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      const sections = ['home', 'features', 'architecture', 'dashboard', 'setup'];
+      const sections = ['home', 'features', 'architecture', 'dashboard', 'usecases', 'setup'];
       for (const section of sections) {
         const el = document.getElementById(section);
         if (el) {
@@ -41,6 +42,7 @@ function App() {
         <Features />
         <Architecture />
         <Dashboard />
+        <UseCases />
         <Setup />
       </main>
       <Footer />
