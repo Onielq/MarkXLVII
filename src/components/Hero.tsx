@@ -1,9 +1,29 @@
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+// TypeScript declaration for voice-orb custom element
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'voice-orb': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
+          state?: 'idle' | 'listening' | 'thinking' | 'speaking';
+          particles?: number;
+          recording?: boolean;
+        },
+        HTMLElement
+      >;
+    }
+  }
+}
 
 export default function Hero() {
   const [statusText, setStatusText] = useState('INITIALIZING...');
   const [pulse, setPulse] = useState(false);
+  const [orbState, setOrbState] = useState<'idle' | 'listening' | 'thinking' | 'speaking'>('idle');
+  const [isListening, setIsListening] = useState(false);
+  const orbRef = useRef<any>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   useEffect(() => {
     const statuses = [
@@ -21,6 +41,44 @@ export default function Hero() {
       setTimeout(() => setPulse(false), 500);
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  const toggleListening = async () => {
+    if (isListening) {
+      // Stop listening
+      if (orbRef.current) {
+        orbRef.current.disconnect();
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      setIsListening(false);
+      setOrbState('idle');
+    } else {
+      // Start listening
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        streamRef.current = stream;
+        if (orbRef.current) {
+          await orbRef.current.connect(stream);
+          setOrbState('listening');
+          setIsListening(true);
+        }
+      } catch (err) {
+        console.error('Microphone access denied:', err);
+        alert('Microphone access is required to talk to JARVIS');
+      }
+    }
+  };
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
   }, []);
 
   return (
@@ -87,14 +145,51 @@ export default function Hero() {
           </div>
         </motion.div>
 
-        {/* Right: Animated HUD visualization */}
+        {/* Right: Voice Orb */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="hidden lg:block"
+          className="hidden lg:flex flex-col items-center gap-6"
         >
-          <HUDVisualization />
+          <div className="w-80 h-80 relative">
+            <voice-orb 
+              ref={orbRef}
+              state={orbState} 
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
+          
+          {/* Voice Orb Controls */}
+          <div className="flex flex-col items-center gap-4">
+            <button
+              onClick={toggleListening}
+              className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-3 ${
+                isListening
+                  ? 'bg-red-500/20 border border-red-500/50 text-red-400 hover:bg-red-500/30'
+                  : 'bg-[#00d4ff]/20 border border-[#00d4ff]/50 text-[#00d4ff] hover:bg-[#00d4ff]/30'
+              }`}
+            >
+              <i className={`fas ${isListening ? 'fa-stop' : 'fa-microphone'}`}></i>
+              <span>{isListening ? 'Stop Listening' : 'Talk to JARVIS'}</span>
+            </button>
+            
+            <div className="flex gap-2">
+              {(['idle', 'listening', 'thinking', 'speaking'] as const).map((state) => (
+                <button
+                  key={state}
+                  onClick={() => setOrbState(state)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
+                    orbState === state
+                      ? 'bg-[#00d4ff]/20 border border-[#00d4ff]/50 text-[#00d4ff]'
+                      : 'bg-[#0d1c27] border border-[#1d3c4a] text-[#9bb6bd] hover:text-[#e6f7fb]'
+                  }`}
+                >
+                  {state}
+                </button>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
 
@@ -107,74 +202,5 @@ export default function Hero() {
         <i className="fas fa-chevron-down text-[#00d4ff]/50 text-xl"></i>
       </motion.div>
     </section>
-  );
-}
-
-function HUDVisualization() {
-  return (
-    <div className="relative w-full aspect-square max-w-md mx-auto">
-      {/* Outer ring */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-0 rounded-full border border-[#00d4ff]/20"
-      >
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-[#00d4ff]"></div>
-      </motion.div>
-
-      {/* Middle ring */}
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-8 rounded-full border border-[#7ef0c1]/20"
-      >
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2 h-2 rounded-full bg-[#7ef0c1]"></div>
-      </motion.div>
-
-      {/* Inner ring */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-        className="absolute inset-16 rounded-full border border-[#00d4ff]/30"
-      >
-        <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#00d4ff]"></div>
-      </motion.div>
-
-      {/* Center core */}
-      <div className="absolute inset-24 rounded-full bg-gradient-to-br from-[#00d4ff]/10 to-[#7ef0c1]/10 border border-[#00d4ff]/30 flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00d4ff] to-[#7ef0c1] flex items-center justify-center shadow-lg shadow-[#00d4ff]/30"
-        >
-          <i className="fas fa-brain text-[#00141b] text-2xl"></i>
-        </motion.div>
-      </div>
-
-      {/* Floating labels */}
-      <motion.div
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 3, repeat: Infinity }}
-        className="absolute top-4 right-4 px-3 py-1 rounded-full bg-[#0d1c27] border border-[#1d3c4a] text-xs font-mono text-[#00d4ff]"
-      >
-        VOICE: ACTIVE
-      </motion.div>
-
-      <motion.div
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 3, repeat: Infinity, delay: 1 }}
-        className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-[#0d1c27] border border-[#1d3c4a] text-xs font-mono text-[#7ef0c1]"
-      >
-        VISION: READY
-      </motion.div>
-
-      <motion.div
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 3, repeat: Infinity, delay: 2 }}
-        className="absolute top-1/2 left-0 -translate-x-2 -translate-y-1/2 px-3 py-1 rounded-full bg-[#0d1c27] border border-[#1d3c4a] text-xs font-mono text-[#00d4ff]"
-      >
-        API: LIVE
-      </motion.div>
-    </div>
   );
 }

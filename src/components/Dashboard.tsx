@@ -1,5 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// TypeScript declaration for voice-orb custom element
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'voice-orb': React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement> & {
+          state?: 'idle' | 'listening' | 'thinking' | 'speaking';
+          particles?: number;
+          recording?: boolean;
+        },
+        HTMLElement
+      >;
+    }
+  }
+}
 
 interface LogEntry {
   id: number;
@@ -31,7 +47,10 @@ export default function Dashboard() {
   const [metrics, setMetrics] = useState(systemMetrics);
   const [state, setState] = useState<'LISTENING' | 'SPEAKING' | 'THINKING'>('LISTENING');
   const [inputText, setInputText] = useState('');
-  const [waveformBars, setWaveformBars] = useState<number[]>(Array(32).fill(0));
+  const orbRef = useRef<any>(null);
+  
+  // Map dashboard state to orb state
+  const orbState = state === 'LISTENING' ? 'listening' : state === 'SPEAKING' ? 'speaking' : 'thinking';
 
   useEffect(() => {
     // Animate logs appearing one by one
@@ -47,17 +66,7 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    // Simulate waveform
-    const interval = setInterval(() => {
-      setWaveformBars(
-        Array(32)
-          .fill(0)
-          .map(() => Math.random() * (state === 'LISTENING' ? 60 : state === 'SPEAKING' ? 100 : 20))
-      );
-    }, 100);
-    return () => clearInterval(interval);
-  }, [state]);
+  // Waveform removed - using voice orb instead
 
   useEffect(() => {
     // Simulate metric changes
@@ -159,30 +168,21 @@ export default function Dashboard() {
           <div className="grid lg:grid-cols-3 gap-0">
             {/* Main panel - Waveform + Log */}
             <div className="lg:col-span-2 p-4">
-              {/* Waveform */}
+              {/* Voice Orb */}
               <div className="mb-4 p-4 rounded-xl bg-[#071018] border border-[#1d3c4a]/40">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono text-[#9bb6bd]">AUDIO WAVEFORM</span>
+                  <span className="text-xs font-mono text-[#9bb6bd]">VOICE ORB</span>
                   <div className="flex items-center gap-2">
                     <div className={`w-2 h-2 rounded-full ${state === 'LISTENING' ? 'bg-[#7ef0c1] animate-pulse' : state === 'SPEAKING' ? 'bg-[#00d4ff] animate-pulse' : 'bg-yellow-400'}`}></div>
                     <span className="text-xs font-mono text-[#9bb6bd]">{state}</span>
                   </div>
                 </div>
-                <div className="flex items-end justify-center gap-0.5 h-16">
-                  {waveformBars.map((height, i) => (
-                    <motion.div
-                      key={i}
-                      animate={{ height: `${height}%` }}
-                      transition={{ duration: 0.1 }}
-                      className="w-1.5 rounded-full"
-                      style={{
-                        background: state === 'SPEAKING'
-                          ? `linear-gradient(to top, #00d4ff, #7ef0c1)`
-                          : `linear-gradient(to top, #7ef0c1, #00d4ff)`,
-                        opacity: 0.6 + (height / 200),
-                      }}
-                    />
-                  ))}
+                <div className="flex items-center justify-center h-48">
+                  <voice-orb 
+                    ref={orbRef}
+                    state={orbState} 
+                    style={{ width: '180px', height: '180px' }}
+                  />
                 </div>
               </div>
 
