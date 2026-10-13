@@ -6,6 +6,7 @@ import Architecture from './components/Architecture';
 import Dashboard from './components/Dashboard';
 import UseCases from './components/UseCases';
 import ExtensionHub from './components/ExtensionHub';
+import BugFixes from './components/BugFixes';
 import Setup from './components/Setup';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -18,7 +19,7 @@ function App() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY);
-      const sections = ['home', 'features', 'architecture', 'dashboard', 'usecases', 'extensions', 'setup'];
+      const sections = ['home', 'features', 'architecture', 'dashboard', 'usecases', 'extensions', 'fixes', 'setup'];
       for (const section of sections) {
         const el = document.getElementById(section);
         if (el) {
@@ -45,6 +46,7 @@ function App() {
         <Dashboard />
         <UseCases />
         <ExtensionHub />
+        <BugFixes />
         <Setup />
       </main>
       <Footer />
