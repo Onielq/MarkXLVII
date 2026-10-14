@@ -1,22 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// TypeScript declaration for voice-orb custom element
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'voice-orb': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          state?: 'idle' | 'listening' | 'thinking' | 'speaking';
-          particles?: number;
-          recording?: boolean;
-        },
-        HTMLElement
-      >;
-    }
-  }
-}
-
 interface LogEntry {
   id: number;
   speaker: 'user' | 'jarvis' | 'system';

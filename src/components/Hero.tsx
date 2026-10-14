@@ -1,22 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 
-// TypeScript declaration for voice-orb custom element
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'voice-orb': React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          state?: 'idle' | 'listening' | 'thinking' | 'speaking';
-          particles?: number;
-          recording?: boolean;
-        },
-        HTMLElement
-      >;
-    }
-  }
-}
-
 export default function Hero() {
   const [statusText, setStatusText] = useState('INITIALIZING...');
   const [pulse, setPulse] = useState(false);
