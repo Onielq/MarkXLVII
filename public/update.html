@@ -125,7 +125,9 @@
                 You installed the packages (<code>rarfile</code>, <code>py7zr</code>, <code>wikipedia-api</code>) 
                 but the <strong>code itself</strong> wasn't updated to USE them. That's why nothing changed.
                 <br><br>
-                <strong>Solution:</strong> Download and replace the 2 Python files below.
+                <strong>Solution:</strong> Download and replace the Python files below.
+                <br><br>
+                <strong>NEW:</strong> Voice orb for PyQt6 desktop app is now available!
             </p>
         </div>
 
@@ -153,28 +155,49 @@
             </a>
         </div>
 
+        <div class="file-card" style="border-color: #7ef0c1;">
+            <h3 style="color: #7ef0c1;">🎯 voice_orb_simple.py (NEW!)</h3>
+            <p>
+                <strong>What it adds:</strong> Real voice orb for your PyQt6 desktop app
+                <br>
+                <strong>Features:</strong> 5000 particles, audio-reactive, 4 states (idle/listening/thinking/speaking)
+                <br>
+                <strong>Requires:</strong> <code>pip install PyQt6 PyOpenGL numpy</code>
+            </p>
+            <a href="/UPDATE_FILES/voice_orb_simple.py" download class="download-btn" style="background: linear-gradient(90deg, #7ef0c1, #00d4ff);">
+                ⬇️ Download voice_orb_simple.py
+            </a>
+        </div>
+
         <div class="steps">
             <h2>📋 Installation Steps</h2>
             
             <div class="step" data-step="1">
-                <h4>Download Both Files</h4>
-                <p>Click the download buttons above</p>
+                <h4>Install Python Packages</h4>
+                <p>Run: <code>pip install rarfile py7zr wikipedia-api PyQt6 PyOpenGL numpy</code></p>
             </div>
 
             <div class="step" data-step="2">
-                <h4>Backup Your Original Files</h4>
-                <p>In your Mark-XLVII folder, run:<br>
-                <code>cp actions/web_search.py actions/web_search.py.backup</code><br>
-                <code>cp actions/file_processor.py actions/file_processor.py.backup</code></p>
+                <h4>Download All 3 Files</h4>
+                <p>Click the download buttons above for web_search.py, file_processor.py, and voice_orb_simple.py</p>
             </div>
 
             <div class="step" data-step="3">
-                <h4>Replace the Files</h4>
-                <p>Copy the downloaded files to <code>Mark-XLVII/actions/</code><br>
-                Overwrite the existing files</p>
+                <h4>Replace the Action Files</h4>
+                <p>Copy to <code>Mark-XLVII/actions/</code>:<br>
+                <code>web_search.py</code> and <code>file_processor.py</code></p>
             </div>
 
             <div class="step" data-step="4">
+                <h4>Add Voice Orb to Your UI</h4>
+                <p>Copy <code>voice_orb_simple.py</code> to <code>Mark-XLVII/</code><br>
+                Add to your ui.py:<br>
+                <code>from voice_orb_simple import VoiceOrb</code><br>
+                <code>self.voice_orb = VoiceOrb(self)</code><br>
+                <code>self.layout.addWidget(self.voice_orb)</code></p>
+            </div>
+
+            <div class="step" data-step="5">
                 <h4>Restart JARVIS</h4>
                 <p>Run: <code>python main.py</code></p>
             </div>
@@ -199,8 +222,8 @@
         </div>
 
         <div style="margin-top: 40px; padding: 20px; background: #0d1c27; border-radius: 12px; text-align: center;">
-            <p style="color: #9bb6bd; margin-bottom: 10px;">That's it! Just 2 files to replace.</p>
-            <p style="color: #7ef0c1; font-weight: bold;">Download → Replace → Restart → Done ✓</p>
+            <p style="color: #9bb6bd; margin-bottom: 10px;">That's it! Just 3 files to add/replace.</p>
+            <p style="color: #7ef0c1; font-weight: bold;">Install Packages → Download Files → Add to Code → Restart → Done ✓</p>
         </div>
     </div>
 </body>
