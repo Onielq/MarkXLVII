@@ -1,0 +1,34 @@
+# Mark XLVIII - Requirements
+# Version 2.2.0
+
+# Core dependencies
+google-genai>=1.0.0
+PyQt6>=6.6.0
+PyOpenGL>=3.1.7
+numpy>=1.24.0
+
+# Web search and data
+requests>=2.31.0
+duckduckgo-search>=4.0.0
+wikipedia-api>=0.6.0
+
+# File processing
+rarfile>=4.1
+py7zr>=0.20.0
+python-docx>=1.1.0
+pdfplumber>=0.10.0
+pandas>=2.1.0
+openpyxl>=3.1.0
+python-pptx>=0.6.21
+Pillow>=10.0.0
+
+# Audio processing
+sounddevice>=0.4.6
+pydub>=0.25.1
+
+# Web dashboard
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# System monitoring
+psutil>=5.9.0
