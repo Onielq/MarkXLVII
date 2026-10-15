@@ -202,13 +202,24 @@ def apply_file_processor_fix():
     return True
 
 def add_voice_orb():
-    print_header("STEP 5: Adding Voice Orb")
+    print_header("STEP 5: Adding Voice Orb + Updated UI")
     
     voice_orb_path = INSTALL_DIR / "voice_orb.py"
     
     print_step("Writing voice_orb.py...")
     voice_orb_path.write_text(VOICE_ORB_CODE, encoding='utf-8')
     print_success("Voice orb added")
+    
+    # Backup and replace ui.py
+    ui_path = INSTALL_DIR / "ui.py"
+    if ui_path.exists():
+        backup = ui_path.with_suffix(".py.backup")
+        shutil.copy2(ui_path, backup)
+        print_success(f"Backed up original ui.py")
+    
+    print_step("Writing updated ui.py with Voice Orb integration...")
+    ui_path.write_text(UI_CODE, encoding='utf-8')
+    print_success("ui.py updated with Voice Orb")
     
     return True
 
@@ -830,6 +841,247 @@ class VoiceOrb(QOpenGLWidget):
             glColor4f(color[0]*brightness, color[1]*brightness, color[2]*brightness, 0.5 + depth * 0.5)
             glVertex3f(x, y, z)
         glEnd()
+'''
+
+# ═══════════════════════════════════════════════════════════════
+# UI CODE (with Voice Orb integration)
+# ═══════════════════════════════════════════════════════════════
+
+UI_CODE = '''"""ui.py - Mark XLVIII PyQt6 Interface with Voice Orb"""
+import sys
+from datetime import datetime
+from PyQt6.QtWidgets import (
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QPushButton, QTextEdit, QFrame, QStatusBar,
+    QMenuBar, QMenu, QSystemTrayIcon, QApplication
+)
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal
+from PyQt6.QtGui import QAction
+
+try:
+    from voice_orb import VoiceOrb
+    VOICE_ORB_AVAILABLE = True
+except ImportError:
+    VOICE_ORB_AVAILABLE = False
+    print("[UI] Voice orb not available - install: pip install PyQt6 PyOpenGL numpy")
+
+DARK_THEME = """
+QMainWindow { background-color: #071018; }
+QWidget { background-color: #071018; color: #e6f7fb; font-family: 'Segoe UI', Arial, sans-serif; }
+QLabel { color: #e6f7fb; background: transparent; }
+QTextEdit {
+    background-color: #0d1c27; color: #e6f7fb;
+    border: 1px solid #1d3c4a; border-radius: 8px;
+    padding: 10px; font-family: 'Consolas', monospace; font-size: 12px;
+}
+QPushButton {
+    background-color: #0d1c27; color: #e6f7fb;
+    border: 1px solid #1d3c4a; border-radius: 8px;
+    padding: 8px 16px; font-weight: bold; min-height: 20px;
+}
+QPushButton:hover { background-color: #1d3c4a; border-color: #00d4ff; }
+QPushButton:pressed { background-color: #00d4ff; color: #00141b; }
+QPushButton#interruptBtn { background-color: #f87171; color: white; border: 1px solid #dc2626; }
+QPushButton#interruptBtn:hover { background-color: #dc2626; }
+QStatusBar { background-color: #0d1c27; color: #9bb6bd; border-top: 1px solid #1d3c4a; }
+QMenuBar { background-color: #0d1c27; color: #e6f7fb; border-bottom: 1px solid #1d3c4a; }
+QMenu { background-color: #0d1c27; color: #e6f7fb; border: 1px solid #1d3c4a; }
+"""
+
+class JarvisUI(QMainWindow):
+    log_signal = pyqtSignal(str, str)
+    state_signal = pyqtSignal(str)
+    status_signal = pyqtSignal(str)
+    
+    def __init__(self, jarvis_instance=None):
+        super().__init__()
+        self.jarvis = jarvis_instance
+        self.setWindowTitle("JARVIS - Mark XLVIII")
+        self.setMinimumSize(1200, 800)
+        self.resize(1400, 900)
+        self.setStyleSheet(DARK_THEME)
+        self._setup_ui()
+        self._setup_menu()
+        self._setup_status_bar()
+        self.log_signal.connect(self._append_log)
+        self.state_signal.connect(self._update_state)
+        self.status_signal.connect(self._update_status)
+        self.current_state = "idle"
+        self._update_state("idle")
+        self._append_log("system", "JARVIS Mark XLVIII initialized")
+        self._append_log("system", "Voice Orb: " + ("ACTIVE" if VOICE_ORB_AVAILABLE else "NOT AVAILABLE"))
+        self._append_log("jarvis", "Good day. All systems operational. How may I assist you?")
+    
+    def _setup_ui(self):
+        central = QWidget()
+        self.setCentralWidget(central)
+        main_layout = QVBoxLayout(central)
+        main_layout.setContentsMargins(15, 15, 15, 15)
+        main_layout.setSpacing(15)
+        
+        # TOP: Voice Orb + Status
+        top_section = QHBoxLayout()
+        top_section.setSpacing(20)
+        
+        if VOICE_ORB_AVAILABLE:
+            orb_container = QFrame()
+            orb_container.setStyleSheet("QFrame { background-color: #0d1c27; border: 1px solid #1d3c4a; border-radius: 12px; }")
+            orb_layout = QVBoxLayout(orb_container)
+            orb_layout.setContentsMargins(10, 10, 10, 10)
+            
+            orb_title = QLabel("VOICE ORB")
+            orb_title.setStyleSheet("color: #9bb6bd; font-size: 11px; font-weight: bold;")
+            orb_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            orb_layout.addWidget(orb_title)
+            
+            self.voice_orb = VoiceOrb(self)
+            self.voice_orb.setMinimumSize(300, 300)
+            self.voice_orb.setMaximumSize(400, 400)
+            orb_layout.addWidget(self.voice_orb)
+            
+            self.orb_state_label = QLabel("IDLE")
+            self.orb_state_label.setStyleSheet("color: #00d4ff; font-size: 14px; font-weight: bold; padding: 5px; background-color: #071018; border-radius: 6px;")
+            self.orb_state_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            orb_layout.addWidget(self.orb_state_label)
+            
+            top_section.addWidget(orb_container)
+        
+        # Status panel
+        status_panel = QFrame()
+        status_panel.setStyleSheet("QFrame { background-color: #0d1c27; border: 1px solid #1d3c4a; border-radius: 12px; }")
+        status_layout = QVBoxLayout(status_panel)
+        status_layout.setContentsMargins(15, 15, 15, 15)
+        
+        status_title = QLabel("SYSTEM STATUS")
+        status_title.setStyleSheet("color: #9bb6bd; font-size: 11px; font-weight: bold;")
+        status_layout.addWidget(status_title)
+        
+        self.status_indicators = {}
+        for name, color in [("Gemini API", "#00d4ff"), ("Microphone", "#7ef0c1"), ("Web Search", "#fbbf24"), ("File System", "#f87171"), ("Memory", "#00d4ff"), ("Network", "#7ef0c1")]:
+            row = QHBoxLayout()
+            indicator = QLabel("●")
+            indicator.setStyleSheet(f"color: {color}; font-size: 16px;")
+            label = QLabel(name)
+            label.setStyleSheet("color: #e6f7fb; font-size: 13px;")
+            row.addWidget(indicator)
+            row.addWidget(label)
+            row.addStretch()
+            status_layout.addLayout(row)
+            self.status_indicators[name] = indicator
+        
+        status_layout.addStretch()
+        
+        self.interrupt_btn = QPushButton("⬛ INTERRUPT")
+        self.interrupt_btn.setObjectName("interruptBtn")
+        self.interrupt_btn.setMinimumHeight(50)
+        self.interrupt_btn.clicked.connect(self._on_interrupt)
+        status_layout.addWidget(self.interrupt_btn)
+        
+        top_section.addWidget(status_panel)
+        main_layout.addLayout(top_section)
+        
+        # MIDDLE: Conversation Log
+        log_frame = QFrame()
+        log_frame.setStyleSheet("QFrame { background-color: #0d1c27; border: 1px solid #1d3c4a; border-radius: 12px; }")
+        log_layout = QVBoxLayout(log_frame)
+        log_layout.setContentsMargins(15, 15, 15, 15)
+        
+        log_header = QHBoxLayout()
+        log_title = QLabel("CONVERSATION LOG")
+        log_title.setStyleSheet("color: #9bb6bd; font-size: 11px; font-weight: bold;")
+        log_header.addWidget(log_title)
+        log_header.addStretch()
+        
+        clear_btn = QPushButton("Clear")
+        clear_btn.setMaximumWidth(80)
+        clear_btn.clicked.connect(lambda: self.log_text.clear())
+        log_header.addWidget(clear_btn)
+        log_layout.addLayout(log_header)
+        
+        self.log_text = QTextEdit()
+        self.log_text.setReadOnly(True)
+        self.log_text.setMinimumHeight(300)
+        log_layout.addWidget(self.log_text)
+        main_layout.addWidget(log_frame)
+        
+        # BOTTOM: Quick Actions
+        actions_frame = QFrame()
+        actions_frame.setStyleSheet("QFrame { background-color: #0d1c27; border: 1px solid #1d3c4a; border-radius: 12px; }")
+        actions_layout = QHBoxLayout(actions_frame)
+        actions_layout.setContentsMargins(15, 15, 15, 15)
+        
+        for text in ["🔍 Search", "📁 Files", "🌤️ Weather", "📰 News", "🎵 Music", "⚙️ Settings"]:
+            btn = QPushButton(text)
+            actions_layout.addWidget(btn)
+        
+        main_layout.addWidget(actions_frame)
+    
+    def _setup_menu(self):
+        menubar = self.menuBar()
+        file_menu = menubar.addMenu("File")
+        exit_action = QAction("Exit", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
+    
+    def _setup_status_bar(self):
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
+        self.status_label = QLabel("Ready")
+        self.status_bar.addWidget(self.status_label)
+        self.time_label = QLabel()
+        self.status_bar.addPermanentWidget(self.time_label)
+        self.time_timer = QTimer(self)
+        self.time_timer.timeout.connect(lambda: self.time_label.setText(datetime.now().strftime("%H:%M:%S")))
+        self.time_timer.start(1000)
+    
+    def write_log(self, speaker: str, message: str):
+        self.log_signal.emit(speaker, message)
+    
+    def set_state(self, state: str):
+        self.state_signal.emit(state)
+    
+    def set_status(self, message: str):
+        self.status_signal.emit(message)
+    
+    def set_audio_bands(self, low: float, mid: float, high: float):
+        if VOICE_ORB_AVAILABLE and hasattr(self, 'voice_orb'):
+            self.voice_orb.set_audio(low, mid, high)
+    
+    def _append_log(self, speaker: str, message: str):
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        colors = {"user": "#7ef0c1", "jarvis": "#00d4ff", "system": "#9bb6bd", "healer": "#fbbf24", "error": "#f87171"}
+        labels = {"user": "You", "jarvis": "Jarvis", "system": "SYS", "healer": "Healer", "error": "ERR"}
+        color = colors.get(speaker, "#e6f7fb")
+        label = labels.get(speaker, speaker.upper())
+        html = f'<span style="color: #1d3c4a;">[{timestamp}]</span> <span style="color: {color}; font-weight: bold;">{label}:</span> <span style="color: {color};">{message}</span>'
+        self.log_text.append(html)
+        scrollbar = self.log_text.verticalScrollBar()
+        scrollbar.setValue(scrollbar.maximum())
+    
+    def _update_state(self, state: str):
+        self.current_state = state
+        if VOICE_ORB_AVAILABLE and hasattr(self, 'voice_orb'):
+            self.voice_orb.set_state(state)
+        if hasattr(self, 'orb_state_label'):
+            self.orb_state_label.setText(state.upper())
+            state_colors = {"idle": "#9bb6bd", "listening": "#7ef0c1", "thinking": "#fbbf24", "speaking": "#00d4ff"}
+            color = state_colors.get(state, "#9bb6bd")
+            self.orb_state_label.setStyleSheet(f"color: {color}; font-size: 14px; font-weight: bold; padding: 5px; background-color: #071018; border-radius: 6px;")
+    
+    def _update_status(self, message: str):
+        self.status_label.setText(message)
+    
+    def _on_interrupt(self):
+        self._append_log("system", "User interrupted JARVIS")
+        self.set_state("idle")
+        if self.jarvis and hasattr(self.jarvis, 'interrupt'):
+            self.jarvis.interrupt()
+    
+    def closeEvent(self, event):
+        if self.jarvis and hasattr(self.jarvis, 'shutdown'):
+            self.jarvis.shutdown()
+        event.accept()
 '''
 
 # ═══════════════════════════════════════════════════════════════

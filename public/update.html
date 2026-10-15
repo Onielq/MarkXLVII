@@ -201,40 +201,51 @@
             </a>
         </div>
 
+        <div class="file-card" style="border-color: #00d4ff;">
+            <h3 style="color: #00d4ff;">🖥️ ui.py (UPDATED with Voice Orb)</h3>
+            <p>
+                <strong>What it is:</strong> Complete PyQt6 interface with Voice Orb already integrated
+                <br>
+                <strong>Features:</strong> Dark theme, conversation log, system status, interrupt button, quick actions
+                <br>
+                <strong>Just replace:</strong> Copy to <code>Mark-XLVII/ui.py</code> (replaces existing)
+                <br>
+                <strong>Includes:</strong> <code>from voice_orb import VoiceOrb</code> + <code>self.voice_orb = VoiceOrb(self)</code> + layout integration
+            </p>
+            <a href="/UPDATE_FILES/ui.py" download class="download-btn" style="background: linear-gradient(90deg, #00d4ff, #7ef0c1);">
+                ⬇️ Download ui.py
+            </a>
+        </div>
+
         <div class="steps">
             <h2>📋 Installation Steps</h2>
-            
+
             <div class="step" data-step="1">
                 <h4>Install Python Packages</h4>
                 <p>Run: <code>pip install rarfile py7zr wikipedia-api PyQt6 PyOpenGL numpy</code></p>
             </div>
 
             <div class="step" data-step="2">
-                <h4>Download All 3 Files</h4>
-                <p>Click the download buttons above for web_search.py, file_processor.py, and voice_orb_simple.py</p>
+                <h4>Download All 4 Files</h4>
+                <p>Click the download buttons above for:<br>
+                • <code>web_search.py</code> • <code>file_processor.py</code> • <code>voice_orb_simple.py</code> • <code>ui.py</code></p>
             </div>
 
             <div class="step" data-step="3">
-                <h4>Replace the Action Files</h4>
-                <p>Copy to <code>Mark-XLVII/actions/</code>:<br>
-                <code>web_search.py</code> and <code>file_processor.py</code></p>
+                <h4>Replace the Files</h4>
+                <p>Copy to your Mark-XLVII folder:<br>
+                • <code>web_search.py</code> → <code>Mark-XLVII/actions/</code><br>
+                • <code>file_processor.py</code> → <code>Mark-XLVII/actions/</code><br>
+                • <code>voice_orb_simple.py</code> → <code>Mark-XLVII/</code><br>
+                • <code>ui.py</code> → <code>Mark-XLVII/</code> (replaces existing - has Voice Orb already integrated!)</p>
             </div>
 
             <div class="step" data-step="4">
-                <h4>Add Voice Orb to Your UI</h4>
-                <p>Copy <code>voice_orb_simple.py</code> to <code>Mark-XLVII/</code><br>
-                Add to your ui.py:<br>
-                <code>from voice_orb_simple import VoiceOrb</code><br>
-                <code>self.voice_orb = VoiceOrb(self)</code><br>
-                <code>self.layout.addWidget(self.voice_orb)</code></p>
-            </div>
-
-            <div class="step" data-step="5">
                 <h4>Restart JARVIS</h4>
                 <p>Run: <code>python main.py</code></p>
+                <p style="color: #7ef0c1; margin-top: 10px;">✓ That's it! The Voice Orb will appear in your JARVIS interface automatically.</p>
             </div>
         </div>
-
         <div class="test-section">
             <h2>✅ Test It Works</h2>
             
@@ -254,8 +265,8 @@
         </div>
 
         <div style="margin-top: 40px; padding: 20px; background: #0d1c27; border-radius: 12px; text-align: center;">
-            <p style="color: #9bb6bd; margin-bottom: 10px;">That's it! Just 3 files to add/replace.</p>
-            <p style="color: #7ef0c1; font-weight: bold;">Install Packages → Download Files → Add to Code → Restart → Done ✓</p>
+            <p style="color: #9bb6bd; margin-bottom: 10px;">That's it! Just 4 files to download and replace.</p>
+            <p style="color: #7ef0c1; font-weight: bold;">Install Packages → Download 4 Files → Replace → Restart → Done ✓</p>
         </div>
     </div>
 </body>
