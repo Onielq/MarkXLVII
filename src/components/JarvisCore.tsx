@@ -213,11 +213,20 @@ export default function JarvisCore() {
     <div className="min-h-screen bg-[#071018] text-[#e6f7fb]">
       <div className="max-w-7xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">
-            JARVIS <span className="text-[#00d4ff]">Core</span>
-          </h1>
-          <p className="text-[#9bb6bd]">Mark XLVIII - Self-Healing AI Assistant</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">
+              JARVIS <span className="text-[#00d4ff]">Core</span>
+            </h1>
+            <p className="text-[#9bb6bd]">Mark XLVIII - Self-Healing AI Assistant</p>
+          </div>
+          <a
+            href="/update.html"
+            className="px-4 py-2 rounded-xl bg-[#7ef0c1]/20 border border-[#7ef0c1]/50 text-[#7ef0c1] text-sm font-medium hover:bg-[#7ef0c1]/30 transition-all flex items-center gap-2"
+          >
+            <i className="fas fa-download"></i>
+            Download Python Updates
+          </a>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">

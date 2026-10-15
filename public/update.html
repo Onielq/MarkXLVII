@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark XLVIII - Download Updates</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #071018;
+            color: #e6f7fb;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7ef0c1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #9bb6bd; margin-bottom: 40px; }
+        .warning {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .warning h2 { color: #f87171; margin-bottom: 10px; }
+        .warning p { color: #9bb6bd; line-height: 1.6; }
+        .file-card {
+            background: #0d1c27;
+            border: 1px solid #1d3c4a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .file-card h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        .file-card p {
+            color: #9bb6bd;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #00d4ff, #7ef0c1);
+            color: #00141b;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        .download-btn:hover { transform: scale(1.05); }
+        .steps {
+            background: #0d1c27;
+            border: 1px solid #1d3c4a;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        .steps h2 { color: #7ef0c1; margin-bottom: 20px; }
+        .step {
+            margin-bottom: 20px;
+            padding-left: 30px;
+            position: relative;
+        }
+        .step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #00d4ff;
+            color: #00141b;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .step h4 { color: #e6f7fb; margin-bottom: 5px; }
+        .step p { color: #9bb6bd; font-size: 0.95em; }
+        code {
+            background: #071018;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #7ef0c1;
+        }
+        .test-section {
+            background: rgba(126, 240, 193, 0.1);
+            border: 1px solid rgba(126, 240, 193, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        .test-section h2 { color: #7ef0c1; margin-bottom: 15px; }
+        .test-item {
+            background: #071018;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .test-item strong { color: #00d4ff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mark XLVIII Updates</h1>
+        <p class="subtitle">Download the fixed files to enable new features</p>
+
+        <div class="warning">
+            <h2>⚠️ Why Nothing Changed</h2>
+            <p>
+                You installed the packages (<code>rarfile</code>, <code>py7zr</code>, <code>wikipedia-api</code>) 
+                but the <strong>code itself</strong> wasn't updated to USE them. That's why nothing changed.
+                <br><br>
+                <strong>Solution:</strong> Download and replace the 2 Python files below.
+            </p>
+        </div>
+
+        <div class="file-card">
+            <h3>📄 web_search.py</h3>
+            <p>
+                <strong>What it fixes:</strong> Can now answer factual questions like "Who is the president of Kenya?"
+                <br>
+                <strong>How:</strong> Added Wikipedia fallback + smart query enhancement
+            </p>
+            <a href="/UPDATE_FILES/actions/web_search.py" download class="download-btn">
+                ⬇️ Download web_search.py
+            </a>
+        </div>
+
+        <div class="file-card">
+            <h3>📄 file_processor.py</h3>
+            <p>
+                <strong>What it fixes:</strong> Can now READ files inside zip/rar/tar/7z archives
+                <br>
+                <strong>How:</strong> Added archive reading without extracting + search inside archives
+            </p>
+            <a href="/UPDATE_FILES/actions/file_processor.py" download class="download-btn">
+                ⬇️ Download file_processor.py
+            </a>
+        </div>
+
+        <div class="steps">
+            <h2>📋 Installation Steps</h2>
+            
+            <div class="step" data-step="1">
+                <h4>Download Both Files</h4>
+                <p>Click the download buttons above</p>
+            </div>
+
+            <div class="step" data-step="2">
+                <h4>Backup Your Original Files</h4>
+                <p>In your Mark-XLVII folder, run:<br>
+                <code>cp actions/web_search.py actions/web_search.py.backup</code><br>
+                <code>cp actions/file_processor.py actions/file_processor.py.backup</code></p>
+            </div>
+
+            <div class="step" data-step="3">
+                <h4>Replace the Files</h4>
+                <p>Copy the downloaded files to <code>Mark-XLVII/actions/</code><br>
+                Overwrite the existing files</p>
+            </div>
+
+            <div class="step" data-step="4">
+                <h4>Restart JARVIS</h4>
+                <p>Run: <code>python main.py</code></p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>✅ Test It Works</h2>
+            
+            <div class="test-item">
+                <strong>Test 1: Web Search</strong><br>
+                Say: "Who is the president of Kenya?"<br>
+                Expected: JARVIS answers with the current president's name
+            </div>
+
+            <div class="test-item">
+                <strong>Test 2: Archive Reading</strong><br>
+                Say: "List files in my_project.zip"<br>
+                Expected: JARVIS shows all files in the archive<br><br>
+                Say: "Read readme.txt from my_project.zip"<br>
+                Expected: JARVIS displays the file contents
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 20px; background: #0d1c27; border-radius: 12px; text-align: center;">
+            <p style="color: #9bb6bd; margin-bottom: 10px;">That's it! Just 2 files to replace.</p>
+            <p style="color: #7ef0c1; font-weight: bold;">Download → Replace → Restart → Done ✓</p>
+        </div>
+    </div>
+</body>
+</html>
